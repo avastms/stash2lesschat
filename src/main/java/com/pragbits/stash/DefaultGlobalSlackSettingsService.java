@@ -4,11 +4,11 @@ package com.pragbits.stash;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 
-public class DefaultGlobalSlackSettingsService implements SlackGlobalSettingsService {
+public class DefaultGlobalLesschatSettingsService implements LesschatGlobalSettingsService {
 
     private final PluginSettings pluginSettings;
 
-    public DefaultGlobalSlackSettingsService(PluginSettingsFactory pluginSettingsFactory) {
+    public DefaultGlobalLesschatSettingsService(PluginSettingsFactory pluginSettingsFactory) {
         this.pluginSettings = pluginSettingsFactory.createGlobalSettings();
     }
 

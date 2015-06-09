@@ -15,9 +15,9 @@ import com.atlassian.stash.util.PageUtils;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.pragbits.stash.ColorCode;
-import com.pragbits.stash.SlackGlobalSettingsService;
-import com.pragbits.stash.SlackSettings;
-import com.pragbits.stash.SlackSettingsService;
+import com.pragbits.stash.LesschatGlobalSettingsService;
+import com.pragbits.stash.LesschatSettings;
+import com.pragbits.stash.LesschatSettingsService;
 import com.pragbits.stash.tools.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,37 +27,37 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class RepositoryPushActivityListener {
-    static final String KEY_GLOBAL_SETTING_HOOK_URL = "stash2slack.globalsettings.hookurl";
+    static final String KEY_GLOBAL_SETTING_HOOK_URL = "stash2lesschat.globalsettings.hookurl";
     private static final Logger log = LoggerFactory.getLogger(RepositoryPushActivityListener.class);
 
-    private final SlackGlobalSettingsService slackGlobalSettingsService;
-    private final SlackSettingsService slackSettingsService;
+    private final LesschatGlobalSettingsService lesschatGlobalSettingsService;
+    private final LesschatSettingsService lesschatSettingsService;
     private final CommitService commitService;
     private final NavBuilder navBuilder;
-    private final SlackNotifier slackNotifier;
+    private final LesschatNotifier lesschatNotifier;
     private final Gson gson = new Gson();
 
-    public RepositoryPushActivityListener(SlackGlobalSettingsService slackGlobalSettingsService,
-                                          SlackSettingsService slackSettingsService,
+    public RepositoryPushActivityListener(LesschatGlobalSettingsService lesschatGlobalSettingsService,
+                                          LesschatSettingsService lesschatSettingsService,
                                           CommitService commitService,
                                           NavBuilder navBuilder,
-                                          SlackNotifier slackNotifier) {
-        this.slackGlobalSettingsService = slackGlobalSettingsService;
-        this.slackSettingsService = slackSettingsService;
+                                          LesschatNotifier lesschatNotifier) {
+        this.lesschatGlobalSettingsService = lesschatGlobalSettingsService;
+        this.lesschatSettingsService = lesschatSettingsService;
         this.commitService = commitService;
         this.navBuilder = navBuilder;
-        this.slackNotifier = slackNotifier;
+        this.lesschatNotifier = lesschatNotifier;
     }
 
     @EventListener
-    public void NotifySlackChannel(RepositoryPushEvent event) {
+    public void NotifyLesschatChannel(RepositoryPushEvent event) {
         // find out if notification is enabled for this repo
         Repository repository = event.getRepository();
-        SlackSettings slackSettings = slackSettingsService.getSlackSettings(repository);
-        String globalHookUrl = slackGlobalSettingsService.getWebHookUrl(KEY_GLOBAL_SETTING_HOOK_URL);
+        LesschatSettings lesschatSettings = lesschatSettingsService.getLesschatSettings(repository);
+        String globalHookUrl = lesschatGlobalSettingsService.getWebHookUrl(KEY_GLOBAL_SETTING_HOOK_URL);
 
-        if (slackSettings.isSlackNotificationsEnabledForPush()) {
-            String localHookUrl = slackSettings.getSlackWebHookUrl();
+        if (lesschatSettings.isLesschatNotificationsEnabledForPush()) {
+            String localHookUrl = lesschatSettings.getLesschatWebHookUrl();
             WebHookSelector hookSelector = new WebHookSelector(globalHookUrl, localHookUrl);
 
             if (!hookSelector.isHookValid()) {
@@ -69,7 +69,7 @@ public class RepositoryPushActivityListener {
             String projectName = repository.getProject().getKey();
 
             for (RefChange refChange : event.getRefChanges()) {
-                SlackPayload payload = new SlackPayload();
+                LesschatPayload payload = new LesschatPayload();
 
                 String url = navBuilder
                         .project(projectName)
@@ -113,7 +113,7 @@ public class RepositoryPushActivityListener {
                     myChanges.addAll(Lists.newArrayList(changeSets.getValues()));
                 }
 
-                switch (slackSettings.getPushNotificationLevel()) {
+                switch (lesschatSettings.getPushNotificationLevel()) {
                     case COMPACT:
                         compactCommitLog(event, refChange, payload, url, myChanges);
                         break;
@@ -125,26 +125,26 @@ public class RepositoryPushActivityListener {
                         break;
                 }
 
-                // slackSettings.getSlackChannelName might be:
+                // lesschatSettings.getLesschatChannelName might be:
                 // - empty
                 // - comma separated list of channel names, eg: #mych1, #mych2, #mych3
 
-                if (slackSettings.getSlackChannelName().isEmpty()) {
-                    slackNotifier.SendSlackNotification(hookSelector.getSelectedHook(), gson.toJson(payload));
+                if (lesschatSettings.getLesschatChannelName().isEmpty()) {
+                    lesschatNotifier.SendLesschatNotification(hookSelector.getSelectedHook(), gson.toJson(payload));
                 } else {
                     // send message to multiple channels
-                    List<String> channels = Arrays.asList(slackSettings.getSlackChannelName().split("\\s*,\\s*"));
+                    List<String> channels = Arrays.asList(lesschatSettings.getLesschatChannelName().split("\\s*,\\s*"));
                     for (String channel: channels) {
                         payload.setChannel(channel.trim());
-                        slackNotifier.SendSlackNotification(hookSelector.getSelectedHook(), gson.toJson(payload));
+                        lesschatNotifier.SendLesschatNotification(hookSelector.getSelectedHook(), gson.toJson(payload));
                     }
                 }
             }
         }
     }
 
-    private void compactCommitLog(RepositoryPushEvent event, RefChange refChange, SlackPayload payload, String url, List<Changeset> myChanges) {
-        SlackAttachment commits = new SlackAttachment();
+    private void compactCommitLog(RepositoryPushEvent event, RefChange refChange, LesschatPayload payload, String url, List<Changeset> myChanges) {
+        LesschatAttachment commits = new LesschatAttachment();
         commits.setColor(ColorCode.GRAY.getCode());
         commits.setTitle(String.format("[%s:%s]", event.getRepository().getName(), refChange.getRefId()));
         StringBuilder attachmentFallback = new StringBuilder();
@@ -152,7 +152,7 @@ public class RepositoryPushActivityListener {
             String commitUrl = url.concat(String.format("/%s", ch.getId()));
             String firstCommitMessageLine = ch.getMessage().split("\n")[0];
 
-            SlackAttachmentField commit = new SlackAttachmentField();
+            LesschatAttachmentField commit = new LesschatAttachmentField();
             commit.setValue(String.format("<%s|%s>: %s - %s",
                     commitUrl, ch.getDisplayId(), firstCommitMessageLine, ch.getAuthor().getName()));
             commit.setShort(false);
@@ -165,12 +165,12 @@ public class RepositoryPushActivityListener {
         payload.addAttachment(commits);
     }
 
-    private void verboseCommitLog(RepositoryPushEvent event, RefChange refChange, SlackPayload payload, String url, String text, List<Changeset> myChanges) {
+    private void verboseCommitLog(RepositoryPushEvent event, RefChange refChange, LesschatPayload payload, String url, String text, List<Changeset> myChanges) {
         for (Changeset ch : myChanges) {
-            SlackAttachment attachment = new SlackAttachment();
+            LesschatAttachment attachment = new LesschatAttachment();
             attachment.setFallback(text);
             attachment.setColor(ColorCode.GRAY.getCode());
-            SlackAttachmentField field = new SlackAttachmentField();
+            LesschatAttachmentField field = new LesschatAttachmentField();
 
             attachment.setTitle(String.format("[%s:%s] - %s", event.getRepository().getName(), refChange.getRefId(), ch.getId()));
             attachment.setTitle_link(url.concat(String.format("/%s", ch.getId())));

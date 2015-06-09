@@ -3,12 +3,12 @@ package com.pragbits.stash;
 import com.atlassian.stash.repository.Repository;
 import javax.annotation.Nonnull;
 
-public interface SlackSettingsService {
+public interface LesschatSettingsService {
 
     @Nonnull
-    SlackSettings getSlackSettings(@Nonnull Repository repository);
+    LesschatSettings getLesschatSettings(@Nonnull Repository repository);
 
     @Nonnull
-    SlackSettings setSlackSettings(@Nonnull Repository repository, @Nonnull SlackSettings settings);
+    LesschatSettings setLesschatSettings(@Nonnull Repository repository, @Nonnull LesschatSettings settings);
 
 }

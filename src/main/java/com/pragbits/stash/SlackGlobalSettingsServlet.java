@@ -23,22 +23,22 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
-public class SlackGlobalSettingsServlet extends HttpServlet {
-    static final String KEY_GLOBAL_SETTING_HOOK_URL = "stash2slack.globalsettings.hookurl";
+public class LesschatGlobalSettingsServlet extends HttpServlet {
+    static final String KEY_GLOBAL_SETTING_HOOK_URL = "stash2lesschat.globalsettings.hookurl";
 
     private final PageBuilderService pageBuilderService;
-    private final SlackGlobalSettingsService slackGlobalSettingsService;
+    private final LesschatGlobalSettingsService lesschatGlobalSettingsService;
     private final SoyTemplateRenderer soyTemplateRenderer;
     private final PermissionValidationService validationService;
     private final I18nService i18nService;
 
-    public SlackGlobalSettingsServlet(PageBuilderService pageBuilderService,
-                                      SlackGlobalSettingsService slackGlobalSettingsService,
+    public LesschatGlobalSettingsServlet(PageBuilderService pageBuilderService,
+                                      LesschatGlobalSettingsService lesschatGlobalSettingsService,
                                       SoyTemplateRenderer soyTemplateRenderer,
                                       PermissionValidationService validationService,
                                       I18nService i18nService) {
         this.pageBuilderService = pageBuilderService;
-        this.slackGlobalSettingsService = slackGlobalSettingsService;
+        this.lesschatGlobalSettingsService = lesschatGlobalSettingsService;
         this.soyTemplateRenderer = soyTemplateRenderer;
         this.validationService = validationService;
         this.i18nService = i18nService;
@@ -57,9 +57,9 @@ public class SlackGlobalSettingsServlet extends HttpServlet {
             return;
         }
 
-        String globalWebHookUrl = req.getParameter("slackGlobalWebHookUrl");
+        String globalWebHookUrl = req.getParameter("lesschatGlobalWebHookUrl");
         if (null != globalWebHookUrl) {
-            slackGlobalSettingsService.setWebHookUrl(KEY_GLOBAL_SETTING_HOOK_URL, globalWebHookUrl);
+            lesschatGlobalSettingsService.setWebHookUrl(KEY_GLOBAL_SETTING_HOOK_URL, globalWebHookUrl);
         }
 
         doGet(req, res);
@@ -77,22 +77,22 @@ public class SlackGlobalSettingsServlet extends HttpServlet {
 
         validationService.validateForGlobal(Permission.ADMIN);
 
-        String webHookUrl = slackGlobalSettingsService.getWebHookUrl(KEY_GLOBAL_SETTING_HOOK_URL);
+        String webHookUrl = lesschatGlobalSettingsService.getWebHookUrl(KEY_GLOBAL_SETTING_HOOK_URL);
         if (null == webHookUrl || webHookUrl.equals("")) {
             webHookUrl = "";
         }
 
         render(response,
-                "stash.page.slack.global.settings.viewGlobalSlackSettings",
+                "stash.page.lesschat.global.settings.viewGlobalLesschatSettings",
                 ImmutableMap.<String, Object>builder()
-                        .put("slackGlobalWebHookUrl", webHookUrl)
+                        .put("lesschatGlobalWebHookUrl", webHookUrl)
                         .build()
         );
     }
 
     private void render(HttpServletResponse response, String templateName, Map<String, Object> data)
             throws IOException, ServletException {
-        pageBuilderService.assembler().resources().requireContext("plugin.adminpage.slack");
+        pageBuilderService.assembler().resources().requireContext("plugin.adminpage.lesschat");
         response.setContentType("text/html;charset=UTF-8");
         try {
             soyTemplateRenderer.render(response.getWriter(), PluginMetadata.getCompleteModuleKey("soy-templates"), templateName, data);

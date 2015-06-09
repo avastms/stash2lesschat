@@ -1,19 +1,19 @@
 package com.pragbits.stash;
 
-public interface SlackSettings {
+public interface LesschatSettings {
 
-    boolean isSlackNotificationsEnabled();
-    boolean isSlackNotificationsOpenedEnabled();
-    boolean isSlackNotificationsReopenedEnabled();
-    boolean isSlackNotificationsUpdatedEnabled();
-    boolean isSlackNotificationsApprovedEnabled();
-    boolean isSlackNotificationsUnapprovedEnabled();
-    boolean isSlackNotificationsDeclinedEnabled();
-    boolean isSlackNotificationsMergedEnabled();
-    boolean isSlackNotificationsCommentedEnabled();
-    boolean isSlackNotificationsEnabledForPush();
+    boolean isLesschatNotificationsEnabled();
+    boolean isLesschatNotificationsOpenedEnabled();
+    boolean isLesschatNotificationsReopenedEnabled();
+    boolean isLesschatNotificationsUpdatedEnabled();
+    boolean isLesschatNotificationsApprovedEnabled();
+    boolean isLesschatNotificationsUnapprovedEnabled();
+    boolean isLesschatNotificationsDeclinedEnabled();
+    boolean isLesschatNotificationsMergedEnabled();
+    boolean isLesschatNotificationsCommentedEnabled();
+    boolean isLesschatNotificationsEnabledForPush();
     PushNotificationLevel getPushNotificationLevel();
-    String getSlackChannelName();
-    String getSlackWebHookUrl();
+    String getLesschatChannelName();
+    String getLesschatWebHookUrl();
 
 }

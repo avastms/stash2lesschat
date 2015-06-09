@@ -30,24 +30,24 @@
    <dependency>com.atlassian.stash.stash-web-plugin:server-soy-templates</dependency>
   </stash-resource>
 
-  <web-item key="repository-settings-slack-settings" weight="30" section="stash.repository.settings.panel/repository-settings-addons-section">
-   <label key="stash.web.repository.settings.tab.slack.settings">Slack settings</label>
-   <tooltip key="stash.web.repository.settings.tab.slack.settings.tooltip">Configure whether you want slack notifications</tooltip>
-   <link>${navBuilder.pluginServlets().path('slack-settings', $project.key, $repository.slug).buildRelNoContext()}</link>
+  <web-item key="repository-settings-lesschat-settings" weight="30" section="stash.repository.settings.panel/repository-settings-addons-section">
+   <label key="stash.web.repository.settings.tab.lesschat.settings">Lesschat settings</label>
+   <tooltip key="stash.web.repository.settings.tab.lesschat.settings.tooltip">Configure whether you want lesschat notifications</tooltip>
+   <link>${navBuilder.pluginServlets().path('lesschat-settings', $project.key, $repository.slug).buildRelNoContext()}</link>
   </web-item>
 
-  <web-item key="global-settings-slack-settings" weight="30" section="atl.admin/admin-settings-section">
-   <label key="stash.web.admin.settings.tab.slack.admin.settings">Stash 2 Slack settings</label>
-   <tooltip key="stash.web.admin.settings.tab.slack.admin.settings.tooltip">Configure global settings for slack notifications</tooltip>
-   <link>/plugins/servlet/slack-global-settings/admin</link>
+  <web-item key="global-settings-lesschat-settings" weight="30" section="atl.admin/admin-settings-section">
+   <label key="stash.web.admin.settings.tab.lesschat.admin.settings">Stash 2 Lesschat settings</label>
+   <tooltip key="stash.web.admin.settings.tab.lesschat.admin.settings.tooltip">Configure global settings for lesschat notifications</tooltip>
+   <link>/plugins/servlet/lesschat-global-settings/admin</link>
   </web-item>
 
-  <servlet key="slack-settings-servlet" class="com.pragbits.stash.SlackSettingsServlet">
-   <url-pattern>/slack-settings/*</url-pattern>
+  <servlet key="lesschat-settings-servlet" class="com.pragbits.stash.LesschatSettingsServlet">
+   <url-pattern>/lesschat-settings/*</url-pattern>
   </servlet>
 
-  <servlet key="slack-global-settings-servlet" class="com.pragbits.stash.SlackGlobalSettingsServlet">
-   <url-pattern>/slack-global-settings/admin</url-pattern>
+  <servlet key="lesschat-global-settings-servlet" class="com.pragbits.stash.LesschatGlobalSettingsServlet">
+   <url-pattern>/lesschat-global-settings/admin</url-pattern>
   </servlet>
 
 </atlassian-plugin>
